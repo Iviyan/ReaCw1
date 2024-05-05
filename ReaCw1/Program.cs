@@ -3,11 +3,6 @@ using ReaCw1.Monuments;
 using static ReaCw1.Utils;
 
 List<Monument> monuments = new();
-monuments.Add(new Monument("Памятник камню", "г.Москва, каменная улица", new(2, 2), new(2000, 01, 01), "Большой камень..."));
-/*
-monuments.Add(new SinglePersonMonument("Памятник А.С. Пушкину", "г.Москва, ул. Пушкина", new(1, 1), new(2000, 01, 01), "",
-    "А.С. Пушкин", new(new(1900, 01, 01), new(1950, 01, 01))));
-    */
 
 const string commandsInfo = """
                             Команды:
@@ -23,12 +18,6 @@ const string commandsInfo = """
 Console.WriteLine("Система учета городских памятников.");
 Console.WriteLine(commandsInfo);
 Console.WriteLine();
-
-/*Console.CancelKeyPress += (sender, e) =>
-{
-    Save();
-    Console.WriteLine("Данные сохранены.");
-};*/
 
 while (true)
 {
@@ -133,8 +122,6 @@ while (true)
     }
     else if (commandName is "q" or "quit")
     {
-        //Save();
-        Console.WriteLine("Данные сохранены");
         break;
     }
     else
@@ -144,5 +131,3 @@ while (true)
 
     Console.WriteLine();
 }
-
-/*void Save() { }*/

@@ -2,4 +2,7 @@ bin/
 obj/
 /packages/
 .idea
+.vs
 *.user
+*.cd
+*.png

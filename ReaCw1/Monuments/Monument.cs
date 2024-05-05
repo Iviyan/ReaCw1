@@ -58,4 +58,4 @@ public readonly record struct MonumentPropertyInfo(string Name, Func<string> Get
         if (orderComparison != 0) return orderComparison;
         return string.Compare(Name, other.Name, StringComparison.Ordinal);
     }
-};
+}

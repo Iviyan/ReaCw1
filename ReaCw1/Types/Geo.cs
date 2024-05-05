@@ -19,4 +19,4 @@ public readonly record struct Geo(double Latitude, double Longitude) : IParsable
     }
 
     public override string ToString() => $"{Latitude}, {Longitude}";
-};
+}
