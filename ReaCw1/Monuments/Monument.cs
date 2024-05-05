@@ -5,18 +5,6 @@ namespace ReaCw1.Monuments;
 
 public class Monument
 {
-    private static readonly Dictionary<string, Func<Monument>> MonumentFactories = new();
-
-    static Monument() => RegisterType("", () => new Monument());
-    
-    public static IReadOnlyDictionary<string, Func<Monument>> Factories => MonumentFactories;
-
-    public static Monument? CreateInstanceForType(string type) =>
-        Factories.TryGetValue(type, out var constructor) ? constructor() : null;
-
-    protected static void RegisterType(string type, Func<Monument> constructor) => MonumentFactories.Add(type, constructor);
-
-    
     [SetsRequiredMembers]
     public Monument() { }
 
@@ -36,17 +24,27 @@ public class Monument
     public required DateOnly ConstructionDate { get; set; } = default;
     public required string Description { get; set; } = string.Empty;
 
-    public virtual SortedSet<MonumentPropertyInfo> GetProperties() => new()
+    public virtual SortedSet<MonumentPropertyInfo> GetProperties()
     {
-        new("Название", () => Name, v => Name = v, 1000),
-        new("Адрес", () => Address, v => Address = v, 900),
-        new("Координаты", () => Geo.ToString(), v => Geo.Parse(v), 800),
-        new("Дата возведения",
-            () => ConstructionDate.ToString("dd.MM.yyyy"),
-            v => ConstructionDate = DateOnly.Parse(v),
-            700),
-        new("Описание", () => Description, v => Description = v, 0),
-    };
+        SortedSet<MonumentPropertyInfo> properties = new()
+        {
+            new("Название", () => Name, v => Name = v, 1000),
+            new("Адрес", () => Address, v => Address = v, 900),
+            new("Координаты", () => Geo.ToString(), v => Geo.Parse(v), 800),
+            new("Дата возведения",
+                () => ConstructionDate.ToString("dd.MM.yyyy"),
+                v => ConstructionDate = DateOnly.Parse(v),
+                700),
+            new("Описание", () => Description, v => Description = v, 0),
+        };
+
+        if (this.GetType() == typeof(Monument))
+        {
+            properties.Add(new("Тип", () => "Памятник", v => Name = v, 2000));
+        }
+
+        return properties;
+    }
 
     public override string ToString() => string.Join('\n', GetProperties().Select(p => $"{p.Name}: {p.Getter()}"));
 }

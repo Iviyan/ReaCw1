@@ -4,63 +4,82 @@ using static ReaCw1.Utils;
 
 List<Monument> monuments = new();
 monuments.Add(new Monument("Памятник камню", "г.Москва, каменная улица", new(2, 2), new(2000, 01, 01), "Большой камень..."));
+/*
 monuments.Add(new SinglePersonMonument("Памятник А.С. Пушкину", "г.Москва, ул. Пушкина", new(1, 1), new(2000, 01, 01), "",
     "А.С. Пушкин", new(new(1900, 01, 01), new(1950, 01, 01))));
+    */
 
 const string commandsInfo = """
                             Команды:
                             l|list - Вывести все памятники.
+                            f|find - Поиск.
                             mt|monument types - Вывести типы памятников.
                             n|new - Добавить памятник.
                             r|remove - Удалить памятник.
-                            f|find - Поиск.
                             h|help - Справка по командам.
                             q|quit - Выход.
                             """;
 
 Console.WriteLine("Система учета городских памятников.");
 Console.WriteLine(commandsInfo);
+Console.WriteLine();
 
-Console.CancelKeyPress += (sender, e) =>
+/*Console.CancelKeyPress += (sender, e) =>
 {
     Save();
     Console.WriteLine("Данные сохранены.");
-};
+};*/
 
 while (true)
 {
-    Console.Write("> ");
-    string command = Console.ReadLine() ?? "";
+    string command = ReadString("> ").ToLowerInvariant();
+    var commandParts = command.Split(' ', 2);
+    string commandName = commandParts.ElementAtOrDefault(0) ?? "";
+    string commandArg = commandParts.ElementAtOrDefault(1) ?? "";
 
-    if (command is "h" or "help")
+    if (commandName is "h" or "help")
     {
         Console.WriteLine(commandsInfo);
     }
-    else if (command is "l" or "list")
+    else if (commandName is "l" or "list" or "f" or "find")
     {
-        foreach (var monument in monuments)
+        var query = commandArg.ToLowerInvariant();
+
+        var result = monuments
+            .Select((m, i) => (index: i, monument: m))
+            .Where(m => m.monument.Name.ToLowerInvariant().Contains(query));
+
+        foreach (var monument in result)
         {
-            Console.WriteLine(monument.ToString());
+            Console.WriteLine($"Номер: {monument.index}");
+            Console.WriteLine(monument.monument.ToString());
             Console.WriteLine();
         }
     }
-    else if (command is "mt" or "monument types")
+    else if (commandName is "mt" or "monument types")
     {
-        foreach (var type in Monument.Factories)
+        for (int i = 0; i < MonumentsProvider.MonumentTypes.Count; i++)
         {
-            Console.WriteLine($"'{type.Key}'");
+            var type = MonumentsProvider.MonumentTypes[i];
+            Console.WriteLine($"{i}) '{type.Name}'");
         }
 
         Console.WriteLine();
     }
-    else if (command is "n" or "new")
+    else if (commandName is "n" or "new")
     {
-        Console.WriteLine("Введите тип памятника. Пустая строка - обычный памятник.");
+        Console.WriteLine("Введите тип (или его номер) памятника. Пустая строка - обычный памятник.");
+        for (int i = 0; i < MonumentsProvider.MonumentTypes.Count; i++)
+        {
+            var type = MonumentsProvider.MonumentTypes[i];
+            Console.WriteLine($"{i}) '{type.Name}'");
+        }
+
         Monument? monument;
         while (true)
         {
             string monumentType = ReadString("> ");
-            monument = Monument.CreateInstanceForType(monumentType);
+            monument = MonumentsProvider.Create(monumentType);
             if (monument != null) break;
             Console.WriteLine("Введённого типа памятника не существует.");
         }
@@ -86,9 +105,8 @@ while (true)
         }
 
         monuments.Add(monument);
-        Console.WriteLine();
     }
-    else if (command is "r" or "remove")
+    else if (commandName is "r" or "remove")
     {
         if (monuments.Count == 0)
         {
@@ -113,21 +131,9 @@ while (true)
             }
         }
     }
-    else if (command is "f" or "find")
+    else if (commandName is "q" or "quit")
     {
-        string query = ReadString("> ");
-        var result = monuments.Where(m => m.Name.Contains(query));
-        foreach (var monument in result)
-        {
-            Console.WriteLine(monument.ToString());
-            Console.WriteLine();
-        }
-
-        break;
-    }
-    else if (command is "q" or "quit")
-    {
-        Save();
+        //Save();
         Console.WriteLine("Данные сохранены");
         break;
     }
@@ -135,6 +141,8 @@ while (true)
     {
         Console.WriteLine("Неизвестная команда.");
     }
+
+    Console.WriteLine();
 }
 
-void Save() { }
+/*void Save() { }*/

@@ -3,11 +3,8 @@ using ReaCw1.Types;
 
 namespace ReaCw1.Monuments;
 
-class SinglePersonMonument : Monument
+public class SinglePersonMonument : Monument
 {
-    [SetsRequiredMembers] // Rider error
-    static SinglePersonMonument() => RegisterType("памятник человеку", () => new SinglePersonMonument());
-
     [SetsRequiredMembers]
     public SinglePersonMonument() : base() { }
 
@@ -23,7 +20,7 @@ class SinglePersonMonument : Monument
     public override SortedSet<MonumentPropertyInfo> GetProperties()
     {
         var properties = base.GetProperties();
-        properties.Add(new("Тип памятника", () => "Памятник человеку", null, 2000));
+        properties.Add(new("Тип", () => "Памятник человеку", null, 2000));
         properties.Add(new("Имя человека", () => PersonName, v => PersonName = v, 690));
         return properties;
     }
