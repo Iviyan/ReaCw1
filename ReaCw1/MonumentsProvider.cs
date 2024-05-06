@@ -26,7 +26,7 @@ public static class MonumentsProvider
             return MonumentTypes[index].Factory();
         }
 
-        var factory = MonumentTypes.FirstOrDefault(f => f.Name == name);
+        var factory = MonumentTypes.FirstOrDefault(f => f.Name.ToLowerInvariant() == name);
         return factory?.Factory() ?? null;
     }
 
